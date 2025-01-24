@@ -7,9 +7,9 @@ const userSchema = require('./validation/validation');
 const {authenticator} = require('../middlewares/authenticator')
 require('dotenv').config()
 
-crudsRoute.use(authenticator)
+// crudsRoute.use(authenticator)
 
-crudsRoute.post('/customers', (req, res) => {
+crudsRoute.post('/customers',authenticator, (req, res) => {
     let {user_id, name, email, phone, company} = req.body;
     const {error, value} = userSchema.validate({
         user_id,
@@ -67,7 +67,7 @@ crudsRoute.post('/customers', (req, res) => {
     }
 });
 
-crudsRoute.get('/customers', (req, res) => {
+crudsRoute.get('/customers', authenticator, (req, res) => {
     db.all(`SELECT * FROM customers`, (err, rows) => {
         if(err) {
             return res.status(500).json({
@@ -78,7 +78,7 @@ crudsRoute.get('/customers', (req, res) => {
     })
 });
 
-crudsRoute.delete('/customers/:id', (req, res) => {
+crudsRoute.delete('/customers/:id', authenticator, (req, res) => {
     const { id } = req.params;
 
     if (!id || isNaN(id)) {
