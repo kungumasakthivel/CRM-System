@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const db = require('../src/database');
+const jwt = require('jsonwebtoken');
 const usersRoute = express.Router();
 require('dotenv').config()
 
@@ -61,7 +62,51 @@ usersRoute.post('/register', (req, res) => {
             })
         }
     })
+});
 
+usersRoute.post('/login', (req, res) => {
+    const {username, password} = req.body;
+
+    let option = {
+        expiresIn: "30d"
+    }
+
+    try {
+        db.get(`SELECT * FROM users WHERE username = ?`, [username], (err, user) => {
+            if (err) return res.status(500).json({error: err.message});
+            
+            if(user) {
+                // console.log(user)
+                let token = jwt.sign({userId: user.id}, process.env.HASH_PASS, option)
+                // console.log(token)
+                bcrypt.compare(password, user.password_hash, function(err, result) {
+                    if(err) {
+                        return res.json({
+                            message: 'something went wrong'
+                        })
+                    }
+                    if(result) {
+                        res.status(201).json({
+                            message: "user logged in successfully",
+                            token: token
+                        })
+                    } else {
+                        res.status(400).json({
+                            message: "wrong password"
+                        })
+                    }
+                })
+            } else {
+                return res.status(400).json({
+                    message: 'user not exist, please register'
+                })
+            }
+        });
+    } catch (err) {
+        res.json({
+            message: err.message
+        })
+    }
 });
 
 module.exports = usersRoute
