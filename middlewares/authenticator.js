@@ -1,28 +1,25 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config()
 
 function authenticator(req, res, next) {
-    const token = req.headers.authenticator
+    const token = req.headers.authorization.slice(7)
 
-    jwt.verify(token, 'manish', (err, decode) => {
+    jwt.verify(token, process.env.HASH_PASS, (err, decode) => {
         if(err) {
-            res.send({
+            res.status(400).json({
                 message: err.message,
-                status: 2
             })
         }
-        console.log(decode)
+        // console.log(decode)
         if(decode) {
             req.body.user = decode.userId
             next()
         } else {
-            res.send({
+            res.status(400).json({
                 message: 'Token is invalid',
-                status: 2,
             })
         }
     })
 }
 
-module.exports = {
-    authenticator
-}
+module.exports = {authenticator}

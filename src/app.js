@@ -10,7 +10,9 @@ app.use(cors());
 app.use(express.json());
 
 const usersRoute = require('../routes/users.routes');
+const crudsRoute = require('../routes/cruds.routes')
 app.use('/', usersRoute);
+app.use('/', crudsRoute);
 
 
 app.get('/test', (req,res) => {
