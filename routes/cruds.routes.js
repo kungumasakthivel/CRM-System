@@ -78,6 +78,66 @@ crudsRoute.get('/customers', authenticator, (req, res) => {
     })
 });
 
+crudsRoute.put('/customers/:id', (req, res) => {
+
+    const { id } = req.params;
+
+    let {user_id, name, email, phone, company} = req.body;
+    const {error, value} = userSchema.validate({
+        user_id,
+        name,
+        email,
+        phone,
+        company
+    })
+
+    if(error) {
+        return res.status(404).json({
+            message: error.details.map((err) => err.message)
+        })
+    }
+
+    user_id, name, email, phone, company = value;
+
+    try {
+        db.get('SELECT * FROM customers WHERE id = ?', [id], (err, user) => {
+            if (err) return res.status(500).json({error: err.message});
+
+            if(user) {
+                const updateQuery = `
+                UPDATE customers SET user_id = ?, name =?, email = ?, phone = ?, company = ?
+                WHERE id = ?
+                `
+                try {
+                    db.run(updateQuery, [user_id, name, email, phone, company.company, id], (err) => {
+                        if(err) {
+                            return res.status(400).json({
+                                message: 'error in insearting customer data ' + err
+                            })
+                        }
+
+                        res.status(201).json({
+                            message: 'customer data updated successfully'
+                        })
+                    })
+                } catch (err) {
+                    res.status(500).json({
+                        message: 'error while doing updaing operations'
+                    })
+                }
+            } else {
+                return res.status(400).json({
+                    message: 'customer not exist with customer id: ' + id
+                })
+            }
+        })
+    } catch (err) {
+        res.status(500).json({
+            message: 'Not updated, Error: ' + err.message
+        })
+    }
+});
+
 crudsRoute.delete('/customers/:id', authenticator, (req, res) => {
     const { id } = req.params;
 
