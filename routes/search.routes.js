@@ -7,7 +7,7 @@ const {authenticator} = require('../middlewares/authenticator');
 const { message } = require('./validation/validation');
 require('dotenv').config()
 
-searchRoute.get("/search", (req, res) => {
+searchRoute.get("/search", authenticator, (req, res) => {
     const {query} = req.query;
 
     if(!query) {
@@ -33,7 +33,7 @@ searchRoute.get("/search", (req, res) => {
     })
 });
 
-searchRoute.get('/search-company', (req, res) => {
+searchRoute.get('/search-company',authenticator, (req, res) => {
     const {company} = req.query;
     console.log(company)
 
