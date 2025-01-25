@@ -33,4 +33,31 @@ searchRoute.get("/search", (req, res) => {
     })
 });
 
+searchRoute.get('/search-company', (req, res) => {
+    const {company} = req.query;
+    console.log(company)
+
+    if(!company) {
+        return res.status(4000).json({message: 'error in query parameter company(required)'})
+    }
+
+    const searchCmpQuery = `
+        SELECT * FROM customers WHERE company LIKE ?
+    `
+    const queryParam = `%${company}%`
+
+    db.all(searchCmpQuery, [queryParam], (err, rows) => {
+        if(err) {
+            return res.status(500).json({
+                message: 'error in executing search company query, error: ' + err 
+            })
+        }
+
+        return res.status(200).json({
+            rows
+        })
+    })
+
+})
+
 module.exports = searchRoute
