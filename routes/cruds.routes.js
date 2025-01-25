@@ -7,7 +7,6 @@ const userSchema = require('./validation/validation');
 const {authenticator} = require('../middlewares/authenticator')
 require('dotenv').config()
 
-// crudsRoute.use(authenticator)
 
 crudsRoute.post('/customers',authenticator, (req, res) => {
     let {user_id, name, email, phone, company} = req.body;
@@ -68,7 +67,8 @@ crudsRoute.post('/customers',authenticator, (req, res) => {
 });
 
 crudsRoute.get('/customers', authenticator, (req, res) => {
-    db.all(`SELECT * FROM customers`, (err, rows) => {
+    const {limit=5, offset=0} = req.query;
+    db.all(`SELECT * FROM customers LIMIT ? OFFSET ?`,[parseInt(limit), parseInt(offset)], (err, rows) => {
         if(err) {
             return res.status(500).json({
                 message: 'error in getting customers'
