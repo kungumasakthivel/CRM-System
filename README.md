@@ -6,8 +6,8 @@ This is a **Customer Relationship Management (CRM)** application backend built u
 
 * https://crm-system-tlpo.onrender.com/register `methods supported: [POST]`
 * https://crm-system-tlpo.onrender.com/login `methods supported: [POST]`
-* https://crm-system-tlpo.onrender.com/customers `send with JWT token methods supported: [GET, POST, PUT]`
-* https://crm-system-tlpo.onrender.com/customers/id `send with JWT token methods supported: [DELETE]`
+* https://crm-system-tlpo.onrender.com/customers `send with JWT token methods supported: [GET, POST]`
+* https://crm-system-tlpo.onrender.com/customers/id `send with JWT token methods supported: [PUT, DELETE]`
 * https://crm-system-tlpo.onrender.com/search?query=value `send with JWT token method supported: [GET]`
 
   * Used to search name, email or phone
